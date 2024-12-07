@@ -7,7 +7,6 @@ const input: string = fs.readFileSync('./Day3/input.txt', 'utf8');
 
 // todo: this might not address nested expressions e.g. mul(mul(1,2),3)
 const regex = /mul\([0-9]{1,3},[0-9]{1,3}\)/g;
-
 const commands = input.match(regex) as string[];
 
 // console.log(commands);
@@ -23,3 +22,26 @@ function processCommand(cmd: string): number {
 }
 
 console.log(answer1);
+
+// part 2
+
+const regex2 = /mul\([0-9]{1,3},[0-9]{1,3}\)|do\(\)|don\'t\(\)/g;
+const commands2 = input.match(regex2) as string[];
+var enabled = true;
+
+// enumerate through the commands, flagging enabled on or off when encountering DO or DONT commands respectively
+
+const answer2 = commands2.reduce((acc, e) => {
+    if (e === "do()") {
+        enabled = true;
+    } else if (e === "don't()") {
+        enabled = false;
+    } else {
+        if (enabled) {
+            acc += processCommand(e);
+        }
+    }
+    return acc;
+}, 0)
+
+console.log(answer2);
