@@ -43,3 +43,77 @@ const sum = passingRows.reduce((acc, r) => {
 }, 0);
 
 console.log(sum);
+
+
+// part 2
+
+const badRows = updateRowsAsNumbers.filter(r => !isGoodRow(r));
+
+// how to correct a bad row? similar algorithm but when we detect a problem we swap positions and restart the row test?
+function correctRow(row: number[]): number[] {
+    const newRow = [...row]
+    // todo: not clean at all to gut most of the previous algorithm
+    for (let i = newRow.length - 1; i >= 0; i--) {
+        const currentNumber = newRow[i];
+        if (lookup[currentNumber]) {
+            const lookupValue = lookup[currentNumber];
+            for (let j = i - 1; j >= 0; j--) {
+                const tester = newRow[j];
+                if (lookupValue.has(tester)) {
+                    // swap them in newRow and restart the process. there's no way this is performant.
+                    var placeholder = currentNumber;
+                    newRow[i] = tester;
+                    newRow[j] = placeholder;
+                    i = row.length;  // this is a hack because it'll get decremented as it enters the outer for-loop again
+                    break;
+                }
+            }
+        }
+    }
+
+    return newRow;
+}
+
+const correctedRows = badRows.map(correctRow);
+
+
+const sum2 = correctedRows.reduce((acc, r) => {
+    return acc += r[Math.floor(r.length / 2)];
+}, 0);
+
+console.log(sum2);
+
+
+
+
+
+// example data for debugging
+const exampleOrders = `47|53
+97|13
+97|61
+97|47
+75|29
+61|13
+75|53
+29|13
+97|29
+53|29
+61|53
+97|53
+61|29
+47|13
+75|47
+97|75
+47|61
+75|61
+47|29
+75|13
+53|13`;
+
+const exampleRows = `
+75,47,61,53,29
+97,61,53,29,13
+75,29,13
+75,97,47,61,53
+61,13,29
+97,13,75,29,47`;
